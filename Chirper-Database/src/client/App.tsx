@@ -30,9 +30,10 @@ class App extends React.Component {
         )
     }
 
+    // reload to hide logout
     showLogout() {
         if (localStorage.getItem('username')) { 
-            return (<li><Link to={'/'} className="nav-link" onClick={() => {localStorage.removeItem('username')}}> Logout </Link></li>);
+            return (<li><Link to={'/'} className="nav-link" onClick={() => {localStorage.removeItem('username'); localStorage.removeItem('id'); window.location.reload();}}> Logout </Link></li>);
         } else return <></>
     }
 }

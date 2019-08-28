@@ -31,7 +31,7 @@ export default class AddChirp extends React.Component<IAddProps, IAddState> {
             );
         } else {
             return <button className="btn btn-deep-teal mt-3 col-md-12 text-center" type="submit"
-                            onClick={() => {this.props.history.push('/')}}>Click here to login</button>
+                onClick={() => {this.props.history.push('/')}}>Click here to login</button>
         }
     }
 

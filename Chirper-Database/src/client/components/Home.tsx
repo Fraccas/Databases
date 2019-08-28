@@ -72,7 +72,6 @@ class Home extends React.Component<IAppProps, IAppState> {
                                 if (this.state.username) {
                                     localStorage.setItem('username', this.state.username);
                                     this.GetUserId(); 
-                                    window.location.reload();
                                 }
                             }}>Login</button>
                     </div>
@@ -92,6 +91,8 @@ class Home extends React.Component<IAppProps, IAppState> {
                 let res2 = await r.json();
                 this.GetUserId; // recursively call function to get id from new user
             }
+
+            if (localStorage.getItem("id")) window.location.reload();
         } catch (error) {
             console.log(error);
         }

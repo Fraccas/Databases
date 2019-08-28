@@ -18,7 +18,6 @@ class Admin extends Component<IAdminProps, IAdminState> {
             let url = '/api/chirpr/' + this.state.id;
             let r = await fetch(url);
             let chirpData = await r.json();
-            console.log(chirpData);
         
             this.setState({
                 chirp: chirpData[0], // returns array, but only one object needed
