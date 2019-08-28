@@ -37,8 +37,8 @@ export default class AddChirp extends React.Component<IAddProps, IAddState> {
 
     // send user data to store on the backend
     SubmitChirp = () => {
-        if (this.state.name && this.state.chirp) {
-            let chirpO = { name: this.state.name, text: this.state.chirp };
+        if (this.state.chirp) {
+            let chirpO = { UserID: localStorage.getItem('id'), ChirpText: this.state.chirp };
             //console.log(JSON.stringify(chirpO));
             return fetch('http://localhost:3000/api/chirpr/post/', {
                 method: 'POST',

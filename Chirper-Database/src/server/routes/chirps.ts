@@ -49,7 +49,6 @@ router.delete('/delete/:id?', (req, res) => {
 // send new chirp
 router.post('/post/', (req, res) => {
     db.Chirpr.postChirp(req.body.UserID, req.body.ChirpText);
-    console.log(req.body);
     res.sendStatus(200);
 });
 

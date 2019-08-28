@@ -42,9 +42,9 @@ router.get('/api/chirpr/user/add/:username', async (req, res) => {
     }
 });
 // add new chirp
-router.post('/api/chirpr/post/:id', async (req, res) => {
+router.post('/api/chirpr/post/', async (req, res) => {
     try {
-        res.json((await db.Chirpr.postChirp(req.params.id, req.body.ChirpText))); 
+        res.json((await db.Chirpr.postChirp(req.body.UserID, req.body.ChirpText))); 
     } catch (e) {
         console.log(e); 
         res.sendStatus(500);
