@@ -62,7 +62,25 @@ router.put('/api/chirpr/update/:id', async (req, res) => {
 // remove chirp by id
 router.delete('/api/chirpr/delete/:id', async (req, res) => {
     try {
-        res.json((await db.Chirpr.deleteChirp(req.params.id)))[0]; // it's an array, but only one result 
+        res.json(await db.Chirpr.deleteChirp(req.params.id)); 
+    } catch (e) {
+        console.log(e); 
+        res.sendStatus(500);
+    }
+});
+// get all mentions
+router.get('/api/chirpr/mentions/:userid', async (req, res) => {
+    try {
+        res.json(await db.Chirpr.getMentions(req.params.userid));
+    } catch (e) {
+        console.log(e); 
+        res.sendStatus(500);
+    }
+});
+// post a mention
+router.get('/api/chirpr/mentions/post/:userid/:chirpid', async (req, res) => {
+    try {
+        res.json(await db.Chirpr.postMention(req.params.userid, req.params.chirpid));
     } catch (e) {
         console.log(e); 
         res.sendStatus(500);

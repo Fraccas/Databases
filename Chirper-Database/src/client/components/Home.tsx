@@ -34,15 +34,15 @@ class Home extends React.Component<IAppProps, IAppState> {
     }
 
     render() {
-        if (localStorage.getItem('username')) {
+        if (localStorage.getItem('username')) { // show all chirps
             return (
                 <div>
-                    {this.state.chirpsA.map((chirp, index) => {
+                    {this.state.chirpsA.map((chirp, index) => {                      
                         if (chirp.name) return (
                             <div key={'chirp-' + index} className="card m-4 shadow">
                                 <div className="card-header"><h5 className="card-title bg-grey">{chirp.name}</h5></div>
                                 <div className="card-body">
-                                    <p className="card-text">{chirp.text}</p>
+                                    <p className="card-text">{this.CheckMention(chirp.text, chirp.key)}</p>
                                 </div>
                                 <div className="card-footer">
                                     <button type="submit" className="btn btn-deep-purple" onClick={() => { this.SendToAdmin(chirp.key) }}>
@@ -55,14 +55,14 @@ class Home extends React.Component<IAppProps, IAppState> {
                     }
                 </div>
             );
-        } else {
+        } else { // show login box
             return (
                 <div className="input-container bg-light p-2 m-0">
                     <div className="form-group m-4 rounded p-4 border shadow">
                         <h2 className="text-center p-2 rounded bg-deep-purple text-light">Please login to view chirper!</h2>
                         <label htmlFor="name">Username</label>
                         <input type="text" className="form-control" defaultValue=""
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => { this.setState({ username: e.target.value });}}></input>
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => { this.setState({ username: e.target.value }); }}></input>
 
                         <label htmlFor="pass">Password</label>
                         <input type="password" className="form-control" defaultValue=""></input>
@@ -71,7 +71,7 @@ class Home extends React.Component<IAppProps, IAppState> {
                             onClick={() => {
                                 if (this.state.username) {
                                     localStorage.setItem('username', this.state.username);
-                                    this.GetUserId(); 
+                                    this.GetUserId();
                                 }
                             }}>Login</button>
                     </div>
@@ -80,19 +80,43 @@ class Home extends React.Component<IAppProps, IAppState> {
         }
     }
 
-    async GetUserId() {
+    CheckMention = (chirpT: string, chirpID: string) => {
+        // check if post has a mention
+        let aText = '';
+        if (chirpT.includes("@")) {
+            let cArr = chirpT.split(' ');
+            let returnedText = (<></>);
+            let username, preName, postName;
+            for (let c of cArr) {
+                if (c.includes("@")) { // found @ tag
+                    username = c.substring(1);
+                    let nameJSX = (
+                        <button type="submit" className="btn btn-sm btn-light" onClick={() => { this.props.history.push('/mentions/' + chirpID) }}>
+                            {c}
+                        </button>
+                    );
+                    returnedText = <>{returnedText} {nameJSX}</>;
+                } else {
+                    returnedText = <>{returnedText} {c}</>;
+                }             
+            }
+            return returnedText
+        } else { // no mentions return normal text
+            return chirpT;
+        }
+    }
+
+    GetUserId = async () => {
         try {
             let r = await fetch('/api/chirpr/user/' + localStorage.getItem('username'));
             let userData = await r.json();
             if (userData[0]) {
                 localStorage.setItem('id', userData[0].id); // user data returns array of ids. just need one
+                window.location.reload();
             } else { // user doesn't exist so store new user into db 
                 let r2 = await fetch('/api/chirpr/user/add/' + localStorage.getItem('username'));
-                let res2 = await r.json();
-                this.GetUserId; // recursively call function to get id from new user
+                this.GetUserId(); // recursively call function to get id from new user
             }
-
-            if (localStorage.getItem("id")) window.location.reload();
         } catch (error) {
             console.log(error);
         }

@@ -37,7 +37,7 @@ export default class AddChirp extends React.Component<IAddProps, IAddState> {
 
     // send user data to store on the backend
     SubmitChirp = () => {
-        if (this.state.chirp) {
+        if (this.state.chirp && localStorage.getItem('id')) {
             let chirpO = { UserID: localStorage.getItem('id'), ChirpText: this.state.chirp };
             //console.log(JSON.stringify(chirpO));
             return fetch('http://localhost:3000/api/chirpr/post/', {
@@ -50,11 +50,51 @@ export default class AddChirp extends React.Component<IAddProps, IAddState> {
                 credentials: 'same-origin',
                 body: JSON.stringify(chirpO),
             }).then(response => {
-                this.props.history.push('/');
-            });
+                this.CheckMentions();        
+                this.props.history.push('/');       
+            });                     
         } else {
             alert('Please enter a name and chirp.');
         }
+    }
+
+    CheckMentions = async() => {
+        // check if post has a mention
+        let chirpT = this.state.chirp;
+        if (chirpT.includes("@")) {
+            let cArr = chirpT.split(' ');
+            for (let c of cArr) {
+                if (c.includes("@")) { // found @ tag
+                    let username = c.substring(1);
+                    let r = await fetch('/api/chirpr/user/' + username);
+                    let userData = await r.json();
+                    let userid = userData[0].id;
+                    if (userid) { // found user id, now add chirp info to mentions
+                        // get our chirp id
+                        let r2 = await fetch('/api/chirpr');
+                        let chirpsData = await r2.json();
+
+                        // look through chirps for our chirp to find id
+                        let chirpid = -1;
+                        Object.keys(chirpsData).map(function (k) { // k is id/key
+                            if (chirpsData[k].UserName != "undefined") {
+                                let cObj = { key: chirpsData[k].ChirpID, name: chirpsData[k].UserName, text: chirpsData[k].ChirpText }
+                                if (chirpsData[k].ChirpText == chirpT) {
+                                    chirpid = chirpsData[k].ChirpID;
+                                    return;
+                                }
+                            }
+                        });
+
+                        // post mention to db
+                        let m = await fetch('/api/chirpr/mentions/post/' + userid + '/' + chirpid);
+                        let data = await m.json();
+                    } else {
+                        console.log('Error getting user id!');
+                    }
+                }
+            }
+        }     
     }
 }
 

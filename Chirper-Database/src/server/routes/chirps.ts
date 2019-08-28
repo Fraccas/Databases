@@ -49,7 +49,16 @@ router.delete('/delete/:id?', (req, res) => {
 // send new chirp
 router.post('/post/', (req, res) => {
     db.Chirpr.postChirp(req.body.UserID, req.body.ChirpText);
-    res.sendStatus(200);
+});
+
+// get mentions by user id
+router.get('/mentions/:userid', (req, res) => {
+    db.Chirpr.getMentions(req.params.userId);
+});
+
+// post new mention with userid and chirpid
+router.get('/mentions/post/:userId/:chirpId', (req, res) => {
+    db.Chirpr.postMention(req.params.userId, req.params.chirpId);
 });
 
 export default router;
