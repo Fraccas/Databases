@@ -16,7 +16,8 @@ class App extends React.Component {
                 <ul className="navbar-nav navbar-right">
                     <li><Link to={'/'} className="nav-link"> Chirps </Link></li>
                     <li><Link to={'/chirp/add'} className="nav-link"> Add Chirp </Link></li> 
-                </ul>
+                    {this.showLogout()}
+                   </ul>
                 </nav>
 
                 <Switch>
@@ -27,6 +28,12 @@ class App extends React.Component {
             </div>        
         </Router>   
         )
+    }
+
+    showLogout() {
+        if (localStorage.getItem('username')) { 
+            return (<li><Link to={'/'} className="nav-link" onClick={() => {localStorage.removeItem('username')}}> Logout </Link></li>);
+        } else return <></>
     }
 }
 
