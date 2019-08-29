@@ -25,7 +25,7 @@ class App extends React.Component {
                     <Route exact path='/' component={Home} />
                     <Route path='/chirp/add' component={AddChirp} />
                     <Route path='/admin/:id' component={Admin} />
-                    <Route path='/mentions/:username' component={Mentions} />
+                    <Route path='/mentions/:id/:username' component={Mentions} />
                 </Switch>
             </div>        
         </Router>   

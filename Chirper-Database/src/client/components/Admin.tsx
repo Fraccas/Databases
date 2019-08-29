@@ -27,6 +27,7 @@ class Admin extends Component<IAdminProps, IAdminState> {
         }
     }
 
+    // render the admin panel
     render() {
         if (this.state.chirp.UserName) {
             return (

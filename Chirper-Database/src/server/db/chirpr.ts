@@ -8,6 +8,7 @@ const updateChirp = async (id: string, chirptext: string) => Query('UPDATE chirp
 const deleteChirp = async (id: string) => Query('DELETE FROM chirps WHERE id = ?', [id]);
 
 const getIdByUsername = async (username: string) => Query('SELECT id FROM users WHERE name LIKE ?', [username]);
+const getUsernameById = async (id: string) => Query('SELECT name FROM users WHERE id = ?', [id]);
 const storeNewUser = async (username: string) => Query('insert into users (name, email, password) values (?, "testemail@yahoo.com", "testpass")', [username]);
 
 const getMentions = async (userid: string) => Query('CALL spUserMentions(?)', [userid]);
@@ -16,6 +17,6 @@ const postMention = async (userid: string, chirpid: string) => Query('insert int
 export default {
     getChirps, getChirpById,
     postChirp, updateChirp, deleteChirp,
-    getIdByUsername, storeNewUser,
+    getIdByUsername, getUsernameById, storeNewUser,
     getMentions, postMention
 }

@@ -74,7 +74,7 @@ export default class AddChirp extends React.Component<IAddProps, IAddState> {
                         let r2 = await fetch('/api/chirpr');
                         let chirpsData = await r2.json();
 
-                        // look through chirps for our chirp to find id
+                        // look through chirps for our chirp to find id (ugh probably not the best practice here)
                         let chirpid = -1;
                         Object.keys(chirpsData).map(function (k) { // k is id/key
                             if (chirpsData[k].UserName != "undefined") {

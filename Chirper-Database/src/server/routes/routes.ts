@@ -1,10 +1,8 @@
 import * as express from 'express';
-import chirpsRouter from './chirps';
 import db from '../db';
 
 let router = express.Router();
 
-router.use('/api/chirps', chirpsRouter);
 // get all chirps
 router.get('/api/chirpr', async(req, res) => {
     try {
@@ -29,6 +27,15 @@ router.get('/api/chirpr/user/:username', async (req, res) => {
         res.json((await db.Chirpr.getIdByUsername(req.params.username))); 
     } catch (e) {
         console.log(e); 
+        res.sendStatus(500);
+    }
+});
+// get username of user by id
+router.get('/api/chirpr/user/byid/:id', async (req, res) => {
+    try {
+        res.json((await db.Chirpr.getUsernameById(req.params.id)));
+    } catch (e) {
+        console.log(e);
         res.sendStatus(500);
     }
 });

@@ -35,14 +35,14 @@ class Home extends React.Component<IAppProps, IAppState> {
 
     render() {
         if (localStorage.getItem('username')) { // show all chirps
-            return (
-                <div>
+            return ( //render boxes with chirp data
+                <>
                     {this.state.chirpsA.map((chirp, index) => {                      
                         if (chirp.name) return (
                             <div key={'chirp-' + index} className="card m-4 shadow">
                                 <div className="card-header"><h5 className="card-title bg-grey">{chirp.name}</h5></div>
                                 <div className="card-body">
-                                    <p className="card-text">{this.CheckMention(chirp.text, chirp.key)}</p>
+                                    <p className="card-text">{this.CheckMention(chirp.text)}</p>
                                 </div>
                                 <div className="card-footer">
                                     <button type="submit" className="btn btn-deep-purple" onClick={() => { this.SendToAdmin(chirp.key) }}>
@@ -53,7 +53,7 @@ class Home extends React.Component<IAppProps, IAppState> {
                         )
                     })
                     }
-                </div>
+                </>
             );
         } else { // show login box
             return (
@@ -71,7 +71,7 @@ class Home extends React.Component<IAppProps, IAppState> {
                             onClick={() => {
                                 if (this.state.username) {
                                     localStorage.setItem('username', this.state.username);
-                                    this.GetUserId();
+                                    this.GetLocalUserId();
                                 }
                             }}>Login</button>
                     </div>
@@ -80,18 +80,25 @@ class Home extends React.Component<IAppProps, IAppState> {
         }
     }
 
-    CheckMention = (chirpT: string, chirpID: string) => {
+    CheckMention = (chirpT: string) => {
         // check if post has a mention
         let aText = '';
         if (chirpT.includes("@")) {
             let cArr = chirpT.split(' ');
             let returnedText = (<></>);
-            let username, preName, postName;
+            
             for (let c of cArr) {
+                let username: string, userid: string;
                 if (c.includes("@")) { // found @ tag
-                    username = c.substring(1);
+                    username = c.substring(1); // remove @
+
+                    // get username's id from db
+                    this.GetUserIdByName(username).then((val) => {
+                        userid = val[0].id;
+                    });
+
                     let nameJSX = (
-                        <button type="submit" className="btn btn-sm btn-light" onClick={() => { this.props.history.push('/mentions/' + chirpID) }}>
+                        <button type="submit" className="btn btn-sm btn-light" onClick={() => { this.props.history.push('/mentions/' + userid + '/' + username) }}>
                             {c}
                         </button>
                     );
@@ -106,7 +113,14 @@ class Home extends React.Component<IAppProps, IAppState> {
         }
     }
 
-    GetUserId = async () => {
+    // get any userid by username
+    GetUserIdByName = async (username: string) => {
+        let uid = await fetch('/api/chirpr/user/' + username);
+        return await uid.json();
+    }
+
+    // stores id to local storage based on clients username (no create account option for now)
+    GetLocalUserId = async () => {
         try {
             let r = await fetch('/api/chirpr/user/' + localStorage.getItem('username'));
             let userData = await r.json();
@@ -115,7 +129,7 @@ class Home extends React.Component<IAppProps, IAppState> {
                 window.location.reload();
             } else { // user doesn't exist so store new user into db 
                 let r2 = await fetch('/api/chirpr/user/add/' + localStorage.getItem('username'));
-                this.GetUserId(); // recursively call function to get id from new user
+                this.GetLocalUserId(); // recursively call function to get id from newly created user
             }
         } catch (error) {
             console.log(error);
