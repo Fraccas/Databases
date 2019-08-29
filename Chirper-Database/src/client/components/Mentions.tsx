@@ -9,7 +9,6 @@ class Mentions extends Component<IMenProps, IMenState> {
             id: this.props.match.params.id,
             username: this.props.match.params.username,
             chirps: [],
-            postnames: [],
             refresh: false
         }
     }
@@ -26,15 +25,13 @@ class Mentions extends Component<IMenProps, IMenState> {
             });
 
             // get all of the names of posters
-            let postnameHolder = [];
+            let postnameHolder:Array<string> = [];
             for (let chirp of this.state.chirps) {
-                this.GetUserIdByName(chirp.userid).then((val) => {
-                    postnameHolder.push(val[0].name);
-                    this.setState({refresh: true});
+                this.GetUserIdByName(chirp.userid).then((val) => { // happens out of order
+                    chirp.postname = val[0].name;
+                    this.setState({refresh: true}); // doesn't render without this
                 });    
             }
-            postnameHolder.sort((a,b) => (a.id - b.id) ? 1 : ((b.id - a.id) ? -1 : 0)); // make sure post names are in order
-            this.setState({postnames: postnameHolder});
         } catch (error) {
             console.log(error);
         }
@@ -48,12 +45,12 @@ class Mentions extends Component<IMenProps, IMenState> {
             {this.state.chirps.map((chirp, index) => {   
                     return (
                         <div key={'mention-' + chirp._created} className="card m-4 shadow">
-                            <div className="card-header"><h5 className="card-title bg-grey">{this.state.postnames[index]}</h5></div>
+                            <div className="card-header"><h5 className="card-title bg-grey">{chirp.postname}</h5></div>
                             <div className="card-body">
                                 <p className="card-text">{chirp.text}</p>
                             </div>
                             <div className="card-footer">
-                            </div>
+                            </div> 
                         </div>
                     )
             })}
@@ -85,6 +82,7 @@ interface IMenProps extends RouteComponentProps< {id: string, username: string} 
 
 interface Chirp {
     id: string, 
+    postname: string
     userid: string,
     text: string,
     _created: string
@@ -94,7 +92,6 @@ interface IMenState {
     id: string,
     username: string,
     chirps: Array<Chirp>,
-    postnames: Array<string>,
     refresh: boolean
 }
 
