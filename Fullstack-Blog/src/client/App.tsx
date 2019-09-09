@@ -5,15 +5,15 @@ class App extends React.Component<IAppProps, IAppState> {
     constructor(props: IAppProps) {
         super(props);
         this.state = {
-            name: null
+            blogs: []
         };
     }
 
     async componentWillMount() {
         try {
-            let r = await fetch('/api/hello');
-            let name = await r.json();
-            this.setState({ name });
+            let r = await fetch('/api/blogs');
+            let blogs = await r.json();
+            this.setState({ blogs });
         } catch (error) {
             console.log(error);
         }
@@ -22,7 +22,12 @@ class App extends React.Component<IAppProps, IAppState> {
     render() {
         return (
             <main className="container my-5">
-                <h1 className="text-primary text-center">Hello {this.state.name}!</h1>
+                <h1 className="covalence-blue">My Blog</h1>
+                <ul className="list-group">
+                    {this.state.blogs.map(blog => {
+                        return <li className="list-group-item">{blog.title}</li>
+                    })}
+                </ul>
             </main>
         )
     }
@@ -31,7 +36,7 @@ class App extends React.Component<IAppProps, IAppState> {
 export interface IAppProps { }
 
 export interface IAppState {
-    name: string;
+    blogs: Array<any>;
 }
 
 export default App;
