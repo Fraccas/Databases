@@ -22,6 +22,36 @@ router.get('/api/blog/:id', async (req, res) => {
     }
 });
 
+// get author name by id
+router.get('/api/author/name/:id', async (req, res) => {
+    try {
+        res.json(await db.Blogs.getAuthorById(req.params.id));
+    } catch (e) {
+        res.sendStatus(500);
+        console.log(e);
+    }
+});
+
+// get author id by name
+router.get('/api/author/:name', async (req, res) => {
+    try {
+        res.json(await db.Blogs.getAuthorByName(req.params.name));
+    } catch (e) {
+        res.sendStatus(500);
+        console.log(e);
+    }
+});
+
+router.post('/api/author/new/:name', async (req, res) => {
+    try {
+        res.json(await db.Blogs.createAuthor(req.params.name));
+    } catch (e) {
+        res.sendStatus(500);
+        console.log(e);
+    }
+});
+
+
 router.post('/api/blog/post/:title/:content/:authorid/:tagid', async (req, res) => {
     try {
         // grab insertID and insert tag with this insertID into DB
@@ -60,7 +90,18 @@ router.delete('/api/blog/delete/:blogid', async (req, res) => {
 
 router.get('/api/blog/tags/:id', async (req, res) => {
     try {
+        console.log('getting blog tas');
         res.json(await db.Blogs.getBlogTags(req.params.id)); 
+    } catch (e) {
+        res.sendStatus(500);
+        console.log(e);
+    }
+});
+
+router.get('/api/blog/alltags', async (req, res) => {
+    try {
+        console.log('get all tags');
+        res.json(await db.Blogs.getAllTags()); 
     } catch (e) {
         res.sendStatus(500);
         console.log(e);

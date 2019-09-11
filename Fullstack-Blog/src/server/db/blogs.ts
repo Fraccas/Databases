@@ -11,9 +11,37 @@ export const getBlogs= async () => {
 
 export const getBlogByID = async (id: string) => {
     return new Promise((resolve, reject) => {
-        Connection.query('SELECT * FROM blogs WHERE ?', [id], (err, results) => {
+        Connection.query('SELECT * FROM blogs WHERE id = ?', [id], (err, results) => {
             if (err) return reject(err);
             resolve(results);
+        });
+    });
+}
+
+export const getAuthorByName = async (name: string) => {
+    return new Promise((resolve, reject) => {
+        Connection.query('SELECT id FROM authors WHERE name = ?', [name], (err, results) => {
+            if (err) return reject(err);
+            resolve(results);
+        });
+    });
+}
+
+export const getAuthorById = async (id: string) => {
+    return new Promise((resolve, reject) => {
+        Connection.query('SELECT name FROM authors WHERE id = ?', [id], (err, results) => {
+            if (err) return reject(err);
+            resolve(results);
+        });
+    });
+}
+
+export const createAuthor = async (name: string) => {
+    return new Promise((resolve, reject) => {
+        let email = name + '@blog.com';
+        Connection.query('INSERT INTO authors (name, email) VALUES (?, ?)', [name, email], (err, results) => {
+            if (err) return reject(err);
+            resolve(results.insertId);
         });
     });
 }
@@ -64,9 +92,20 @@ export const postBlogTag = async (blogid: string, tagid: string) => {
     });
 }
 
+export const getAllTags = async () => {
+    return new Promise((resolve, reject) => {
+        console.log('grabbing tags');
+        Connection.query('SELECT id, name from tags', (err, results) => {
+            if (err) return reject(err);
+            resolve(results);
+        });
+    });
+}
+
 
 export default {
     getBlogs, getBlogByID,
     postBlog, updateBlog, deleteBlog,
-    getBlogTags, postBlogTag
+    getBlogTags, postBlogTag, getAllTags,
+    getAuthorByName, getAuthorById, createAuthor
 }

@@ -7,8 +7,7 @@ class Home extends React.Component<IAppProps, IAppState> {
         super(props);
         this.state = {
             blogA: [],
-            username: '',
-            userid: ''
+            refresh: ''
         };
     }
 
@@ -18,7 +17,20 @@ class Home extends React.Component<IAppProps, IAppState> {
             let blogData = await r.json();
 
             // set blogdata to state for render
-            this.setState({blogA: blogData});
+            this.setState({blogA: blogData});    
+            
+            // convert ids to author names
+            for(let blog of this.state.blogA) {
+                let r2 = await fetch('/api/author/name/' + blog.authorid);
+                let res2 = await r2.json();
+                let authorName = res2[0]['name'];
+                blog.authorid = authorName;
+
+                // format date
+                blog._created = blog._created.slice(0, 10);
+            }
+            this.setState({refresh: 'go'}); // forces rerender after array update
+            
         } catch (error) {
             console.log(error);
         }
@@ -31,12 +43,12 @@ class Home extends React.Component<IAppProps, IAppState> {
                     {this.state.blogA.map((blog, index) => {                      
                         if (blog.title) return (
                             <div key={'blog-' + index} className="card shadow m-4 p-0 col-md-3">
-                                <div className="card-header"><h5 className="card-title bg-grey">Blog</h5></div>
+                                <div className="card-header"><h5 className="card-title bg-grey">{blog.title}</h5></div>
                                 <div className="card-body">
-                                    <h5 className="card-text">{blog.title}</h5>
-                                    <p className="card-text">{blog.authorid}</p>
-                                    <p className="card-text">{blog._created}</p>
-                                    <button type="submit" className="btn btn-secondary" onClick={() => { }}>
+                                    <h5 className="card-text">{blog.authorid}</h5>
+                                    <h5 className="card-text">{blog._created}</h5>
+                                    <hr></hr>
+                                    <button type="submit" className="btn btn-secondary" onClick={() => { this.props.history.push('/blog/view/'+blog.id+'/'+blog.authorid) }}>
                                         View Blog
                                     </button>
                                 </div>
@@ -63,8 +75,7 @@ export interface IAppProps extends RouteComponentProps {
 
 export interface IAppState {
     blogA: Array<BlogPreview>;
-    username: string;
-    userid: string;
+    refresh: string
 }
 
 export default Home;
