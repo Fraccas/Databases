@@ -16,7 +16,6 @@ class Home extends React.Component<IAppProps, IAppState> {
         try {
             let r = await fetch('/api/blogs');
             let blogData = await r.json();
-            console.log(blogData);
 
             // set blogdata to state for render
             this.setState({blogA: blogData});
