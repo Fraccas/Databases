@@ -13,6 +13,16 @@ router.get('/api/blogs', async (req, res) => {
     }
 });
 
+router.get('/api/blog/alltags', async (req, res) => { 
+    try {
+        console.log('get all tags');
+        res.json(await db.Blogs.getAllTags()); 
+    } catch (e) {
+        res.sendStatus(500);
+        console.log(e);
+    }
+});
+
 router.get('/api/blog/:id', async (req, res) => {
     try {
         res.json(await db.Blogs.getBlogByID(req.params.id));
@@ -90,18 +100,7 @@ router.delete('/api/blog/delete/:blogid', async (req, res) => {
 
 router.get('/api/blog/tags/:id', async (req, res) => {
     try {
-        console.log('getting blog tas');
         res.json(await db.Blogs.getBlogTags(req.params.id)); 
-    } catch (e) {
-        res.sendStatus(500);
-        console.log(e);
-    }
-});
-
-router.get('/api/blog/alltags', async (req, res) => {
-    try {
-        console.log('get all tags');
-        res.json(await db.Blogs.getAllTags()); 
     } catch (e) {
         res.sendStatus(500);
         console.log(e);

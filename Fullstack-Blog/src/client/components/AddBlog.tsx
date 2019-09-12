@@ -1,6 +1,5 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import { runInThisContext } from 'vm';
 
 export default class AddBlog extends React.Component<IAddProps, IAddState> {
     constructor(props: IAddProps) {
@@ -9,15 +8,17 @@ export default class AddBlog extends React.Component<IAddProps, IAddState> {
             name: '',
             blogTitle: '',
             blogContent: '', 
+            tagID: '1',
             tags: []
         }
     }
 
+    // grab all tags from DB
     async componentDidMount() {
         try {
             let r = await fetch('/api/blog/alltags');
             let tagsD = await r.json();
-            console.log(tagsD);
+            this.setState({tags: tagsD});
         } catch (error) {
             console.log(error);
         }
@@ -28,14 +29,23 @@ export default class AddBlog extends React.Component<IAddProps, IAddState> {
             <div className="input-container bg-light p-2 m-0">
                 <div className="form-group m-4 rounded p-4 border shadow">
                     <h2 className="text-center p-2 rounded bg-secondary text-light">Add Blog</h2>
+
                     <label htmlFor="name">Name</label>
                     <input type="text" className="form-control" placeholder='username...'
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.setState({ name: e.target.value })}></input>
                     <hr></hr>
+
+                    <label htmlFor="tag-select">Choose a tag:</label><br></br>
+                    <select id="tag-select" onChange={(e: React.ChangeEvent<HTMLSelectElement>) => this.setState({ tagID: e.target.value})}>
+                        {this.LoopTags()}
+                    </select>
+                    <hr></hr>
+
                     <label htmlFor="blog">Blog Title</label>
                     <input type="text" className="form-control" placeholder='title...'
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.setState({ blogTitle: e.target.value })}></input>
                     <hr></hr>
+
                     <label htmlFor="blog">Blog Content</label>
                     <textarea className="form-control" placeholder="write your blog..." cols={100}
                         onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => this.setState({ blogContent: e.target.value })}></textarea>
@@ -44,6 +54,14 @@ export default class AddBlog extends React.Component<IAddProps, IAddState> {
                         onClick={this.SubmitBlog}>Submit Chirp</button>
                 </div>
             </div>
+        );
+    }
+
+    LoopTags = () => {
+        return (
+        this.state.tags.map((t) => {
+            return (<option key={t['name']} value={t['id']}>{t['name']}</option>);
+            })
         );
     }
 
@@ -70,7 +88,7 @@ export default class AddBlog extends React.Component<IAddProps, IAddState> {
                 authorID = res2.toString();
             }
 
-            let link = '/api/blog/post/' + this.state.blogTitle + '/' + this.state.blogContent + '/' + authorID + '/1';
+            let link = '/api/blog/post/' + this.state.blogTitle + '/' + this.state.blogContent + '/' + authorID + '/' + this.state.tagID;
             return fetch(link, {
                 method: 'POST',
                 headers: {
@@ -94,5 +112,6 @@ export interface IAddState {
     name: string,
     blogTitle: string,
     blogContent: string,
+    tagID: string,
     tags: Array<string>
 }

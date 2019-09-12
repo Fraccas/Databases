@@ -95,7 +95,7 @@ export const postBlogTag = async (blogid: string, tagid: string) => {
 export const getAllTags = async () => {
     return new Promise((resolve, reject) => {
         console.log('grabbing tags');
-        Connection.query('SELECT id, name from tags', (err, results) => {
+        Connection.query('SELECT id, name FROM tags', (err, results) => {
             if (err) return reject(err);
             resolve(results);
         });

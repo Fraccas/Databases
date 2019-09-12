@@ -64,7 +64,6 @@ class Admin extends Component<IAdminProps, IAdminState> {
         if (this.state.nContent) this.state.blog.content = this.state.nContent;
 
         let url = '/api/blog/update/' + this.state.blog.title + '/' + this.state.blog.content + '/' + this.state.id;
-        console.log(url);
         return fetch(url, {
             method: 'PUT',
             headers: {

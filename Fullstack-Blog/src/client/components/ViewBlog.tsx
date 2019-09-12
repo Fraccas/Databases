@@ -5,11 +5,11 @@ class ViewBlog extends Component<IViewProps, IViewState> {
 
     constructor(props: IViewProps) {
         super(props);
-        console.log(this.props.match.params.author);
         this.state = {
             blog: {id: '', title: '', content: '', authorid: '', _created: ''},
             id: this.props.match.params.id,
-            author: this.props.match.params.author
+            author: this.props.match.params.author,
+            tag: 'empty'
         }
     }
 
@@ -18,11 +18,15 @@ class ViewBlog extends Component<IViewProps, IViewState> {
             let url = '/api/blog/' + this.state.id;
             let r = await fetch(url);
             let blogData = await r.json();
-            console.log(blogData[0]);
         
             this.setState({
-                blog: blogData[0], // returns array, but only one object needed
+                blog: blogData[0],
             });
+
+            let r2 = await fetch('/api/blog/tags/' + this.state.id);
+            let res = await r2.json();
+            this.setState({tag: res[0][0]['name']});
+
         } catch (error) {
             console.log(error);
         }
@@ -36,8 +40,11 @@ class ViewBlog extends Component<IViewProps, IViewState> {
                     <h2 className="text-center p-2 rounded bg-secondary text-light">Blog</h2>
                     <div className="form-group">
                         <h2>{this.state.blog.title}</h2>
+                        <span className="badge badge-warning">{this.state.tag}</span>
 
+                        <hr></hr>
                         <p>{this.state.blog.content}</p>
+                        <hr></hr>
 
                         <h5>{this.state.author}</h5>
                         <h5>{this.state.blog._created.slice(0, 10)}</h5>
@@ -72,7 +79,8 @@ interface Blog {
 interface IViewState {
     blog: Blog,
     id: string,
-    author: string
+    author: string,
+    tag: string
 }
 
 export default ViewBlog;
