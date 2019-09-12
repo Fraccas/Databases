@@ -51,7 +51,7 @@ export default class AddBlog extends React.Component<IAddProps, IAddState> {
                         onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => this.setState({ blogContent: e.target.value })}></textarea>
 
                     <button className="btn btn-secondary mt-3 col-md-12 text-center" type="submit"
-                        onClick={this.SubmitBlog}>Submit Chirp</button>
+                        onClick={this.SubmitBlog}>Submit Blog</button>
                 </div>
             </div>
         );
@@ -113,5 +113,5 @@ export interface IAddState {
     blogTitle: string,
     blogContent: string,
     tagID: string,
-    tags: Array<string>
+    tags: Array<any>
 }

@@ -15,7 +15,6 @@ router.get('/api/blogs', async (req, res) => {
 
 router.get('/api/blog/alltags', async (req, res) => { 
     try {
-        console.log('get all tags');
         res.json(await db.Blogs.getAllTags()); 
     } catch (e) {
         res.sendStatus(500);
